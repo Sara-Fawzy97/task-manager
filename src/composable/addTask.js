@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from 'vue-router'
+import getAllPosts from './displayPosts'
 
 
 const addTask = () => {
@@ -9,17 +10,18 @@ const addTask = () => {
         title: '',
         description: '',
     })
-
+    const posts = ref([])
     const inputTask = ref('')
     const apiUrl = 'http://localhost:3000/'
     const router = new useRouter()
 
-    const load = async() => {
+    const load = async(newPost) => {
         try {
-            const result = await axios.post(apiUrl + 'tasks', post.value);
+            const result = await axios.post(apiUrl + 'tasks', newPost);
+
             // inputTask.value = result.data
             console.log(inputTask.value)
-
+            posts.value.push(result.data)
             router.push({
                 name: 'posts'
             })

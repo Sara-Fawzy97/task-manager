@@ -1,11 +1,11 @@
 <template>
-  <div> <form @submit.prevent="update(route.currentRoute.value.params.id,inputTask.value)">
+  <div> <form @submit.prevent="handleSubmit">
       <div>
         <label for="title" class="text-lg">Title </label
         ><input
           id="title"
           name="title"
-         v-model="post.title"
+         v-model="updatedPost.title"
           required
           type="text"
           placeholder="Title"
@@ -18,7 +18,7 @@
         <input
           id="desc"
           name="desc"
-        v-model="post.description"
+        v-model="updatedPost.description"
           required
           type="text"
           placeholder="Describtion"
@@ -39,12 +39,18 @@ import { ref,onMounted } from "vue";
 import { useRouter } from 'vue-router'
 
 
-const {post, fetchOnePost, inputTask,update,posts,displayPosts}=usePosts()
+const {post, fetchOnePost,update,displayPosts,updatedPost}=usePosts()
 const route = useRouter();
 
 onMounted(()=>{
   fetchOnePost(route.currentRoute.value.params.id)
+  displayPosts()
 })
+
+const handleSubmit= async()=>{
+  // const updatedTask=
+ await update(route.currentRoute.value.params.id,updatedPost.value)
+}
 
 </script>
 

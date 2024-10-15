@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 import { useRouter } from 'vue-router'
 
@@ -8,7 +8,11 @@ const usePosts = () => {
 
     const post = ref({})
 
-    const inputTask = ref({})
+    const updatedPost = ref({
+        title: '',
+        description: '',
+        completed: ''
+    })
     const apiUrl = `http://localhost:3000/`
     const router = new useRouter()
 
@@ -29,24 +33,39 @@ const usePosts = () => {
     const fetchOnePost = async(id) => {
         try {
             const result = await axios.get(apiUrl + `tasks/${id}`)
-            post.value = result.data
-            console.log(result.data)
+            updatedPost.value = result.data
+            console.log(updatedPost.value)
+
         } catch {
             (error) => console.log(error)
 
         }
     }
 
-    const update = async(id, inputTask) => {
+    const update = async(id, updatedPost) => {
+        console.log('updatedPost:', updatedPost);
+
+        // if (!updatedPost || Object.keys(updatedPost).length === 0) {
+        //     console.error('Error: updatedPost is undefined or empty');
+        //     return;
+        // }
 
         try {
-            const result = await axios.patch(apiUrl + `tasks/${id}`, inputTask)
-            const index = posts.value.findIndex(u => u.id === id);
-            console.log(index)
-            console.log(result.data)
+            const result = await axios.patch(apiUrl + `tasks/${id}`, updatedPost)
+            const index = posts.value.findIndex(p => p._id === id);
+
             console.log(posts.value)
-            console.log(inputTask)
-            posts.value[index] = result.data
+            if (index !== -1) {
+                // console.log(posts.value[index])
+                posts.value[index] = result.data
+                    // posts.value.splice(index, 1, result.data);
+
+
+            }
+            console.log(index)
+            console.log(id)
+            console.log(result.data)
+            console.log(updatedPost)
 
             router.push({
                 name: 'posts'
@@ -60,10 +79,10 @@ const usePosts = () => {
     return {
         post,
         fetchOnePost,
-        inputTask,
         update,
         posts,
-        displayPosts
+        displayPosts,
+        updatedPost
     }
 }
 export default usePosts
